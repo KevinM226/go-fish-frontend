@@ -1,5 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState, useEffect } from 'react';
+
+const GenRoomID = () => {
+  return Math.random().toString(36).slice(2,6).toUpperCase();
+}
 
 function App() {
   return (
@@ -7,7 +12,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Nut
         </p>
         <a
           className="App-link"
