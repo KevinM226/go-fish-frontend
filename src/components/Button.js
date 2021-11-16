@@ -1,8 +1,6 @@
-import { Link } from 'react-router-dom'
 
-const Button = ({ text, color, onClick, link }) => {
+const Button = ({ text, color, onClick }) => {
     return (
-    <Link to= {link}>
         <button 
             onClick={onClick}
             style = {{ backgroundColor: color }}
@@ -10,7 +8,6 @@ const Button = ({ text, color, onClick, link }) => {
         >
             {text}
         </button>
-    </Link>
 
     )
 }

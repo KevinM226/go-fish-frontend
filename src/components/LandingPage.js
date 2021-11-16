@@ -4,7 +4,7 @@ import logo from "../Images/logo.png"
 import Button from "./Button"
 
 //Landing page component
-export const LandingPage = ({ createGame, setCurrentPage }) => {
+export const LandingPage = ({ findGame, setCurrentPage }) => {
 
     //Added a basic map function at the bottom of this return
     //this can be taken out, but it is good for testing at the moment
@@ -17,9 +17,14 @@ export const LandingPage = ({ createGame, setCurrentPage }) => {
                 Welcome to Go Fish!
             </h1>
             <div>
-                <Button color = "green" text = "Host a Game" onClick = {() => {
-                    createGame()
-                    setCurrentPage("HostGameRoom")
+                <Button text = "Create a Game" color = "green" onClick = {() => {
+                    setCurrentPage("CreateGamePage")
+                }} />
+            </div>
+            <div>
+                <Button text = "Find Game" color = "blue" onClick = {() => {
+                    findGame()
+                    setCurrentPage("FindGamePage")
                 }} />
             </div>
         </div>

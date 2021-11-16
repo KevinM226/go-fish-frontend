@@ -1,6 +1,8 @@
 import './App.css';
 import LandingPage from "./components/LandingPage";
 import HostCreatePage from "./components/CreateGamePage";
+import PlayGamePage from "./components/PlayGamePage";
+import FindGamePage from "./components/FindGamePage";
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 
@@ -36,27 +38,46 @@ const App = () => {
 
 
   const conditionalRender = () => {
-    if (currentPage == "CreateGameRoom") {
+    if (currentPage == "CreateGamePage") {
       return(<HostCreatePage 
+        gameData = {gameData}
+        createGame={makeGame}
         setCurrentPage = {setCurrentPage}
         />)
+    }
+    if (currentPage == "PlayGamePage") {
+      return(<PlayGamePage 
+        setCurrentPage = {setCurrentPage}
+        />)
+    }
+    if (currentPage == "FindGamePage") {
+      return(<FindGamePage 
+        gameData = {gameData}
+        setCurrentPage = {setCurrentPage}
+      />)
     }
     //Base State is landing page
     return(<LandingPage 
       gameData = {gameData} 
       gameIDData = {gameIDData} 
       setCurrentPage = {setCurrentPage}
+      findGame={findGame}
       />)
   }
 
   
-  //OnClick for host room button
+  //OnClick for create game button
   const makeGame = async() => {
     const gameID = GenGameID()
     const res = await Axios.post("http://localhost:3000/game/create", { name: gameID });
 
     setMongoGameID(res.data._id)
     setGameIDData(res.data.name)
+  }
+
+  //OnClick for create game button
+  const findGame = async() => {
+    console.log("Click")
   }
 
   //use effect (same as ComponentDidMount), runs when component renders
