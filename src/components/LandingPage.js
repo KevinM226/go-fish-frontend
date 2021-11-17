@@ -17,12 +17,12 @@ export const LandingPage = ({ findGame, setCurrentPage }) => {
                 Welcome to Go Fish!
             </h1>
             <div>
-                <Button text = "Create a Game" color = "green" onClick = {() => {
+                <Button text = "Create a Game" color = "white" onClick = {() => {
                     setCurrentPage("CreateGamePage")
                 }} />
             </div>
             <div>
-                <Button text = "Find Game" color = "blue" onClick = {() => {
+                <Button text = "Find Game" color = "white" onClick = {() => {
                     findGame()
                     setCurrentPage("FindGamePage")
                 }} />

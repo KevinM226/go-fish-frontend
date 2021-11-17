@@ -6,32 +6,29 @@ import FindGamePage from "./components/FindGamePage";
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 
-//Generate A Game ID to be used 
-const GenGameID = () => {
-  return Math.random().toString(36).slice(2,6).toUpperCase();
-}
-
 //main app 
 const App = () => {
   //state constants, and their set functions for games, players, and cardss
   const [gameData, setGameData] = useState([])
   const [cardData, setCardData] = useState([])
   const [gameIDData, setGameIDData] = useState("")
+  const [userInputName, setUserInputName] = useState("")
   const [mongoGameID, setMongoGameID] = useState("")
+  const [mapGames, setMapGames] = useState([])
 
   //state of the current page, used to render specific pages
   const [currentPage, setCurrentPage] = useState("")
 
   //fetch all the Games
   const fetchGames = async () => {
-    const res = await Axios.get("http://localhost:3000/game/findAll")
+    const res = await Axios.get("http://localhost:3003/game/findAll")
     const data = await res.data
     return data
   }
 
   //fetch all cards
   const fetchCards = async () => {
-    const res = await Axios.get("http://localhost:3000/card/findAll")
+    const res = await Axios.get("http://localhost:3003/card/findAll")
     const data = await res.data
     return data
   }
@@ -41,8 +38,9 @@ const App = () => {
     if (currentPage == "CreateGamePage") {
       return(<HostCreatePage 
         gameData = {gameData}
-        createGame={makeGame}
+        makeGameArr={makeGameArr}
         setCurrentPage = {setCurrentPage}
+        addButton = {addButton}
         />)
     }
     if (currentPage == "PlayGamePage") {
@@ -65,19 +63,66 @@ const App = () => {
       />)
   }
 
-  
   //OnClick for create game button
-  const makeGame = async() => {
-    const gameID = GenGameID()
-    const res = await Axios.post("http://localhost:3000/game/create", { name: gameID });
-
-    setMongoGameID(res.data._id)
-    setGameIDData(res.data.name)
+  const addButton = async(gameTitle) => {
+    console.log('click ' + gameTitle)
+    setUserInputName(gameTitle)
   }
 
   //OnClick for create game button
   const findGame = async() => {
     console.log("Click")
+  }
+
+  const makeGameArr = () => {
+    var mapArray = [{}]
+
+    var IDArr = []
+    var gameArr = []
+    
+
+    const getGames = async (IDArr, gameArr) => {
+
+        var mapCount = 0
+
+        var gameCount, IDCount
+
+        for (gameCount = 0; gameCount < gameArr.length; gameCount++) {
+            for (IDCount = 0; IDCount < IDArr.length; IDCount++) {
+                if (gameArr[gameCount]._id === IDArr[IDCount]) {
+                   mapArray[mapCount] = gameArr[gameCount]
+                   mapCount++
+                }
+                
+            }
+        }
+        setMapGames(mapArray)
+    }
+
+    const getGameIDs = async ( id ) => {
+      try {
+        console.log("Game Id to get name for", id)
+        const res = await Axios.get(`http://localhost:3003/game/findOne/${id}`)
+        IDArr = res.data
+        gameArr = res.data
+      } catch (err) {
+        console.log(err)
+      }
+
+    }
+
+    const findGameArr = async () => {
+      try{
+        const res = await Axios.get("http://localhost:3003/game/findAll")
+        gameArr = res.data
+        mongoGameID = res.data._id
+        getGames();
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    findGameArr(getGameIDs)
   }
 
   //use effect (same as ComponentDidMount), runs when component renders
