@@ -156,14 +156,16 @@ const App = () => {
       setPlayerData(playersFromBackend)
     }
     
-    //if cards has data in it, don't run the fetch again
+    //get all the data when first launched
     if (!cardData.length) {
       getCards()
     }
-    
-    //get all the games and players from mongoDB
-    getGames()
-    getPlayers()
+    if (!gameData.length){
+      getGames()
+    }
+    if(!playerData.length){
+      getPlayers()
+    }
 
   }, [])
 

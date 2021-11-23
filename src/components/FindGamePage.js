@@ -15,13 +15,10 @@ export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, se
             setMongoGameID(foundGame.data._id)
             const createdPlayer = await Axios.post("http://localhost:3003/player/create", { name: pName })
             setMongoPlayerID(createdPlayer.data._id)
-            const holdPlayerID = createdPlayer.data._id
             const addedCount = await Axios.put(`http://localhost:3003/game/updateCount/${foundGame.data._id}`)
-            console.log("The updated player count is:")
-            console.log(addedCount.data.playerCount)
-            const updatedGame = await Axios.put(`http://localhost:3003/game/addPlayer/${foundGame.data._id}`, { playerId: holdPlayerID })
-            console.log("The updated game is:")
-            console.log(updatedGame)
+            var holdPlayerIDs =  await foundGame.data.players
+            holdPlayerIDs.push(createdPlayer.data._id)
+            const updatedGame = await Axios.put(`http://localhost:3003/game/addPlayer/${foundGame.data._id}`, { playerId: holdPlayerIDs })
         } catch (err) {
             console.error(err)
         }
@@ -89,8 +86,12 @@ export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, se
                         getGames()
                     }} />
                 </div>
+                <div>
+                    <Button text = "Back To Menu" color = "white" onClick = {() => {
+                        setCurrentPage("LandingPage")
+                    }} />
+                </div>
             </div>
-            
         </div> 
     )
 }

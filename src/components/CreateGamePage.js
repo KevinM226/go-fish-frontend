@@ -64,9 +64,9 @@ export const CreateGamePage = ({ gameData, setCurrentPage, setMongoPlayerID, use
                 }}/>
             </div>
         </div>
-        <Button text = "Back To Menu" color = "white" onClick = {() => {
+            <Button text = "Back To Menu" color = "white" onClick = {() => {
                 setCurrentPage("LandingPage")
-        }} />
+            }} />
         </div>
     )
 }
