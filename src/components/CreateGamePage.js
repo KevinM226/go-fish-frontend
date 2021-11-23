@@ -2,26 +2,42 @@ import { useState, useEffect } from 'react';
 import Button from "./Button"
 import Axios from "axios"
 
-export const CreateGamePage = ({ gameData, makeGameArr, addButton, setCurrentPage }) => {
+export const CreateGamePage = ({ gameData, setCurrentPage, setMongoPlayerID, userInputPlayerName, setMongoGameID, setGameData }) => {
     const [gameName, setGameName] = useState("")
 
-    const createNewGame = async ( gName ) => {
+    const createNewGame = async ( gName, pName ) => {
+        pName = userInputPlayerName
         try {
+            console.log("This is the name that the player will create with", pName)
+            const createdPlayer = await Axios.post("http://localhost:3003/player/create", { name: pName });
+            setMongoPlayerID(createdPlayer.data._id)
             console.log("This is the name that the game will create with", gName)
-            const createdGame = await Axios.post("http://localhost:3003/game/create", { name: gName, playerCount: 1 });
+            const createdGame = await Axios.post("http://localhost:3003/game/create", { name: gName, players: createdPlayer.data._id, playerCount: 1 });
+            setMongoGameID(createdGame.data._id)
         } catch (err) {
             console.error(err)
         }
         
     }
 
+    //used to make UI elements look nice
+    const styles = ({
+        spaceInput: {
+            width: 200,
+            height: 25,
+            marginBottom: 50
+        },
+    })
+
     return(
         <div>
             <div>
-            <h1>Welcome to the Create a Game Page!</h1>
+            <h1 >
+                Welcome to the Create a Game Page!
+            </h1>
             <div>
                 <input type = 'text' required 
-                placeholder = 'Enter Game Name' value = { gameName } onChange = {(e) => setGameName(e.target.value)}/>
+                placeholder = 'Enter Game Name' value = { gameName } onChange = {(e) => setGameName(e.target.value)} style={styles.spaceInput}/>    
             </div>
             <div>
                 <Button color = "white" text = "Start Game" onClick = {() => {
@@ -31,15 +47,14 @@ export const CreateGamePage = ({ gameData, makeGameArr, addButton, setCurrentPag
                     var count = 0
                     while(checkedForName == false && count < gameData.length){
                         if(gameName.toLocaleLowerCase() === gameData[count].name.toLocaleLowerCase()){
-                            addButton(gameName)
                             nameFound = true
                             checkedForName = true
                         }
                         count++
                     }
+                    
                     if(nameFound == false) {
-                        createNewGame(gameName).then(() => {
-                            makeGameArr()
+                        createNewGame(gameName, userInputPlayerName).then(() => {
                             setCurrentPage("PlayGamePage") 
                         })
                        

@@ -11,9 +11,10 @@ const App = () => {
   //state constants, and their set functions for games, players, and cardss
   const [gameData, setGameData] = useState([])
   const [cardData, setCardData] = useState([])
-  const [gameIDData, setGameIDData] = useState("")
-  const [userInputName, setUserInputName] = useState("")
+  const [playerData, setPlayerData] = useState([])
   const [mongoGameID, setMongoGameID] = useState("")
+  const [userInputPlayerName, setUserInputPlayerName] = useState("")
+  const [mongoPlayerID, setMongoPlayerID] = useState("")
   const [mapGames, setMapGames] = useState([])
 
   //state of the current page, used to render specific pages
@@ -33,53 +34,64 @@ const App = () => {
     return data
   }
 
+   //fetch all players
+   const fetchPlayers = async () => {
+    const res = await Axios.get("http://localhost:3003/player/findAll")
+    const data = await res.data
+    return data
+  }
+
 
   const conditionalRender = () => {
     if (currentPage == "CreateGamePage") {
       return(<HostCreatePage 
         gameData = {gameData}
-        makeGameArr={makeGameArr}
+        setGameData = {setGameData}
         setCurrentPage = {setCurrentPage}
-        addButton = {addButton}
-        />)
+        userInputPlayerName = {userInputPlayerName}
+        setMongoPlayerID = {setMongoPlayerID} 
+        setMongoGameID = {setMongoGameID}
+      />)
     }
     if (currentPage == "PlayGamePage") {
       return(<PlayGamePage 
         setCurrentPage = {setCurrentPage}
-        />)
+        setGameData = {setGameData}
+        mongoPlayerID={mongoPlayerID}
+        mongoGameID={mongoGameID}
+        userInputPlayerName = {userInputPlayerName}
+        setPlayerData = {setPlayerData}
+        gameData = {gameData}
+        playerData = {playerData}
+      />)
     }
     if (currentPage == "FindGamePage") {
       return(<FindGamePage 
         gameData = {gameData}
         setCurrentPage = {setCurrentPage}
+        setGameData = {setGameData}
+        mongoPlayerID={mongoPlayerID}
+        setMongoPlayerID = {setMongoPlayerID}
+        userInputPlayerName = {userInputPlayerName}
+        setMongoGameID = {setMongoGameID}
       />)
     }
     //Base State is landing page
     return(<LandingPage 
-      gameData = {gameData} 
-      gameIDData = {gameIDData} 
+      gameData = {gameData}
+      playerData={playerData}  
+      setUserInputPlayerName = {setUserInputPlayerName}
       setCurrentPage = {setCurrentPage}
-      findGame={findGame}
-      />)
+    />)
   }
 
-  //OnClick for create game button
-  const addButton = async(gameTitle) => {
-    console.log('click ' + gameTitle)
-    setUserInputName(gameTitle)
-  }
-
-  //OnClick for create game button
-  const findGame = async() => {
-    console.log("Click")
-  }
-
+  
+  //an array that gets all the current games from the backend
   const makeGameArr = () => {
     var mapArray = [{}]
 
     var IDArr = []
     var gameArr = []
-    
 
     const getGames = async (IDArr, gameArr) => {
 
@@ -115,7 +127,8 @@ const App = () => {
       try{
         const res = await Axios.get("http://localhost:3003/game/findAll")
         gameArr = res.data
-        mongoGameID = res.data._id
+        console.log("This is gameArr")
+        console.log(gameArr)
         getGames();
       } catch (err) {
         console.log(err)
@@ -132,10 +145,15 @@ const App = () => {
       const gamesFromBackend = await fetchGames()
       setGameData(gamesFromBackend)
     }
-    //calls the fetch movies and changes state of movieData
+    //calls the fetch cards and changes state of cardData
     const getCards = async() => {
       const cardsFromBackend = await fetchCards()
       setCardData(cardsFromBackend)
+    }
+    //calls the fetch players and changes state of playerData
+    const getPlayers = async() => {
+      const playersFromBackend = await fetchPlayers()
+      setPlayerData(playersFromBackend)
     }
     
     //if cards has data in it, don't run the fetch again
@@ -143,8 +161,9 @@ const App = () => {
       getCards()
     }
     
-    //get all the games from mongoDB
+    //get all the games and players from mongoDB
     getGames()
+    getPlayers()
 
   }, [])
 
