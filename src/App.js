@@ -63,6 +63,7 @@ const App = () => {
         setPlayerData = {setPlayerData}
         gameData = {gameData}
         playerData = {playerData}
+        cardData = {cardData}
       />)
     }
     if (currentPage == "FindGamePage") {

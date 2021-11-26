@@ -57,7 +57,7 @@ export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, se
                 </h1>
                 <div>
                     <input type = 'text' required 
-                    placeholder = 'Enter Game Name' value = { gameName } onChange = {(e) => setGameName(e.target.value)}/>
+                    placeholder = 'Enter Game Name' value = { gameName } onChange = {(e) => setGameName(e.target.value)} style={styles.spaceInput}/>
                 </div>
                 <div>
                     <Button text = "Find Entered Game" color = "white" onClick = {() => {
