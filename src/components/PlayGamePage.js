@@ -67,7 +67,7 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
         for(let i = 0; i < 6; i++){
             try{
                 const holdCard = generateCards()
-                const updatedPlayer = await Axios.put(`http://localhost:3003/player/addCard/${mongoGameID}`, { card: holdCard._id })
+                const updatedPlayer = await Axios.put(`http://192.168.1.138:80803/player/addCard/${mongoGameID}`, { card: holdCard._id })
             } catch (err) {
                 console.error(err)
             }
@@ -75,14 +75,14 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
     }
 
     const fetchPlayer = async () => {
-        const res = await Axios.get(`http://localhost:3003/player/findOne/${mongoPlayerID}`)
+        const res = await Axios.get(`http://192.168.1.138:80803/player/findOne/${mongoPlayerID}`)
         const data = await res.data
         setPlayerData(data)
     }
 
     const updateTurn = async ( gName, pName ) => {
         try {
-            const updatedGame = await Axios.put(`http://localhost:3003/game/changeTurn/${mongoGameID}`, { playerName: "holdPlayerIDs" })
+            const updatedGame = await Axios.put(`http://192.168.1.138:80803/game/changeTurn/${mongoGameID}`, { playerName: "holdPlayerIDs" })
         } catch (err) {
             console.error(err)
         }
