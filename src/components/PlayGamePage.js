@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Button from "./Button"
 import Axios from "axios"
 
+const ipAddress = "172.24.163.3"
+
 //Landing page component
 export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData, setPlayerData, setGameData, cardData, mongoPlayerID }) => {
     const [currentTurn, setCurrentTurn] = useState("")
@@ -67,7 +69,7 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
         for(let i = 0; i < 6; i++){
             try{
                 const holdCard = generateCards()
-                const updatedPlayer = await Axios.put(`http://192.168.1.138:3003/player/addCard/${mongoGameID}`, { card: holdCard._id })
+                const updatedPlayer = await Axios.put(`http://${ipAddress}:3003/player/addCard/${mongoGameID}`, { card: holdCard._id })
             } catch (err) {
                 console.error(err)
             }
@@ -75,14 +77,14 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
     }
 
     const fetchPlayer = async () => {
-        const res = await Axios.get(`http://192.168.1.138:3003/player/findOne/${mongoPlayerID}`)
+        const res = await Axios.get(`http://${ipAddress}:3003/player/findOne/${mongoPlayerID}`)
         const data = await res.data
         setPlayerData(data)
     }
 
     const updateTurn = async ( gName, pName ) => {
         try {
-            const updatedGame = await Axios.put(`http://192.168.1.138:3003/game/changeTurn/${mongoGameID}`, { playerName: "holdPlayerIDs" })
+            const updatedGame = await Axios.put(`http://${ipAddress}:3003/game/changeTurn/${mongoGameID}`, { playerName: "holdPlayerIDs" })
         } catch (err) {
             console.error(err)
         }
@@ -92,7 +94,29 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
         console.log("CLICKED");
     };
 
-    fetchPlayer()
+    //fetch all the Games
+    const fetchGames = async () => {
+        const res = await Axios.get(`http://${ipAddress}:3003/game/findAll`)
+        const data = await res.data
+        return data
+    }
+
+    //calls the fetch rooms and changes state of roomData
+    const getGames = async() => {
+        const gamesFromBackend = await fetchGames()
+        setGameData(gamesFromBackend)
+    }
+
+    const updateGame = async () => {
+        const res = await Axios.get(`http://${ipAddress}:3003/game/findOne/${mongoGameID}`)
+        setCurrentTurn(res.data.turn)
+        console.log(currentTurn) 
+        fetchPlayer()
+        setCurrentPage("PlayGamePage")
+    }
+
+    
+    //updateGame()
     //console.log(playerData.cards)
     
     
@@ -103,7 +127,7 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
                     Current Turn: {currentTurn}
                 </h1>
                 <label style={styles.spacePlayerLabel}>
-                    Player is currently: Deciding
+                    Player is currently: {currentTurn}
                 </label>
             </div>
             <div>
@@ -117,6 +141,11 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
             <div>
                 <Button text = "Back To Menu" color = "white" onClick = {() => {
                     setCurrentPage("LandingPage")
+                }} />
+            </div>
+            <div>
+                <Button text = "Change Turn" color = "white" onClick = {() => {
+                    setCurrentTurn("Test")
                 }} />
             </div>
         </div>  
