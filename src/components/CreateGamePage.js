@@ -9,10 +9,10 @@ export const CreateGamePage = ({ gameData, setCurrentPage, setMongoPlayerID, use
         pName = userInputPlayerName
         try {
             console.log("This is the name that the player will create with", pName)
-            const createdPlayer = await Axios.post("http://192.168.1.138:80803/player/create", { name: pName });
+            const createdPlayer = await Axios.post("http://192.168.1.138:8080/player/create", { name: pName });
             setMongoPlayerID(createdPlayer.data._id)
             console.log("This is the name that the game will create with", gName)
-            const createdGame = await Axios.post("http://192.168.1.138:80803/game/create", { name: gName, players: createdPlayer.data._id, playerCount: 1, turn: pName });
+            const createdGame = await Axios.post("http://192.168.1.138:8080/game/create", { name: gName, players: createdPlayer.data._id, playerCount: 1, turn: pName });
             setMongoGameID(createdGame.data._id)
         } catch (err) {
             console.error(err)
