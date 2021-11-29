@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Button from "./Button"
 import Axios from "axios"
 
+const ipAddress = "172.24.163.3"
 
 //Landing page component
 export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, setGameData, setMongoPlayerID, setMongoGameID }) => {
@@ -11,14 +12,14 @@ export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, se
 
     const joinGame = async ( gName, pName ) => {
         try {
-            const foundGame = await Axios.get(`http://192.168.1.138:3003/game/findOne/${gName}`)
+            const foundGame = await Axios.get(`http://${ipAddress}:3003/game/findOne/${gName}`)
             setMongoGameID(foundGame.data._id)
-            const createdPlayer = await Axios.post("http://192.168.1.138:3003/player/create", { name: pName })
+            const createdPlayer = await Axios.post(`http://${ipAddress}:3003/player/create`, { name: pName })
             setMongoPlayerID(createdPlayer.data._id)
-            const addedCount = await Axios.put(`http://192.168.1.138:3003/game/updateCount/${foundGame.data._id}`)
+            const addedCount = await Axios.put(`http://${ipAddress}:3003/game/updateCount/${foundGame.data._id}`)
             var holdPlayerIDs =  await foundGame.data.players
             holdPlayerIDs.push(createdPlayer.data._id)
-            const updatedGame = await Axios.put(`http://192.168.1.138:3003/game/addPlayer/${foundGame.data._id}`, { playerId: holdPlayerIDs })
+            const updatedGame = await Axios.put(`http://${ipAddress}:3003/game/addPlayer/${foundGame.data._id}`, { playerId: holdPlayerIDs })
         } catch (err) {
             console.error(err)
         }
@@ -36,7 +37,7 @@ export const FindGamePage = ({ gameData, setCurrentPage, userInputPlayerName, se
     
     //fetch all the Games
     const fetchGames = async () => {
-        const res = await Axios.get("http://192.168.1.138:3003/game/findAll")
+        const res = await Axios.get(`http://${ipAddress}:3003/game/findAll`)
         const data = await res.data
         return data
     }

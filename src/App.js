@@ -6,6 +6,8 @@ import FindGamePage from "./components/FindGamePage";
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
 
+const ipAddress = "172.24.163.3"
+
 //main app 
 const App = () => {
   //state constants, and their set functions for games, players, and cardss
@@ -22,21 +24,21 @@ const App = () => {
 
   //fetch all the Games
   const fetchGames = async () => {
-    const res = await Axios.get("http://192.168.1.138:3003/game/findAll")
+    const res = await Axios.get(`http://${ipAddress}:3003/game/findAll`)
     const data = await res.data
     return data
   }
 
   //fetch all cards
   const fetchCards = async () => {
-    const res = await Axios.get("http://192.168.1.138:3003/card/findAll")
+    const res = await Axios.get(`http://${ipAddress}:3003/card/findAll`)
     const data = await res.data
     return data
   }
 
    //fetch all players
    const fetchPlayers = async () => {
-    const res = await Axios.get("http://192.168.1.138:3003/player/findAll")
+    const res = await Axios.get(`http://${ipAddress}:3003/player/findAll`)
     const data = await res.data
     return data
   }
@@ -115,7 +117,7 @@ const App = () => {
     const getGameIDs = async ( id ) => {
       try {
         console.log("Game Id to get name for", id)
-        const res = await Axios.get(`http://192.168.1.138:3003/game/findOne/${id}`)
+        const res = await Axios.get(`http://${ipAddress}:3003/game/findOne/${id}`)
         IDArr = res.data
         gameArr = res.data
       } catch (err) {
@@ -126,7 +128,7 @@ const App = () => {
 
     const findGameArr = async () => {
       try{
-        const res = await Axios.get("http://192.168.1.138:3003/game/findAll")
+        const res = await Axios.get(`http://${ipAddress}:3003/game/findAll`)
         gameArr = res.data
         console.log("This is gameArr")
         console.log(gameArr)
