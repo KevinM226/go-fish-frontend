@@ -5,8 +5,7 @@ import PlayGamePage from "./components/PlayGamePage";
 import FindGamePage from "./components/FindGamePage";
 import React, { useState, useEffect } from 'react';
 import Axios from "axios";
-
-const ipAddress = "172.24.163.3"
+import ipAddress from './ipStore'
 
 //main app 
 const App = () => {

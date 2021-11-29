@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import Button from "./Button"
 import Axios from "axios"
-
-const ipAddress = "172.24.163.3"
+import ipAddress from '../ipStore';
 
 //Landing page component
 export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData, setPlayerData, setGameData, cardData, mongoPlayerID }) => {

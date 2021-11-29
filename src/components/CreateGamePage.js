@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import Button from "./Button"
 import Axios from "axios"
-
-const ipAddress = "172.24.163.3"
+import ipAddress from '../ipStore';
 
 export const CreateGamePage = ({ gameData, setCurrentPage, setMongoPlayerID, userInputPlayerName, setMongoGameID, setGameData }) => {
     const [gameName, setGameName] = useState("")
