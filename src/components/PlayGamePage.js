@@ -107,9 +107,9 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         var notFound = false
         var count = 0
 
-         console.log(cardID)
+        //console.log(cardID)
         while(notFound == false && count < cardData.length){  
-            console.log(cardData[count]) 
+            //console.log(cardData[count]) 
             if(cardData[count]._id == cardID){
                 console.log(cardData[count].img)
                 notFound = true
@@ -135,8 +135,8 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         var notFound = false
         var count = 0
         while(notFound == false && count < gameData.length){
-            console.log(gameData[count])
-            console.log(gameID)
+            //console.log(gameData[count])
+            //console.log(gameID)
             if(gameID){
                 if(gameData[count]._id == gameID){
                     console.log(gameData[count])
@@ -166,14 +166,17 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         if(thisGameData.name){
             if(thisGameData.turnNum = thisGameData.playerCount){
                const holdUpdate = await turnRequest(0)
+               return 1
             }
             else {
                 const holdVal = thisGameData.turnNum + 1
-                const holdUpdate = await turnRequest(holdVal) 
+                const holdUpdate = await turnRequest(holdVal)
+                return 1 
             }
         }
         else {
             alert("Please refresh game")
+            return 2
         }
     }
 
@@ -196,9 +199,11 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
     }
 
     const updatedGame = async () => {
-        const callFindAll =  await fetchGames()
+        const callFindAll =  await getGames()
         const callPlayer = await findGame(mongoGameID)
-        if(thisGameData.turnNum){
+        console.log("thisGameData: ")
+        console.log(thisGameData.turnNum)
+        if(thisGameData.turnNum >= 0){
             const holdIndex = thisGameData.turnNum
             const holdPlayerName = await findPlyerTurn(thisGameData.players[holdIndex])
             const holdAction = await findAction(thisGameData.players[holdIndex])
@@ -215,17 +220,23 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         
     }
 
-    const cardClick = () => {
-        if(thisGameData.cards && thisPlayerData.name){
-            if(thisPlayerData.action == "Going"){
-
+    const cardClick = async() => {
+        if(thisGameData.name){
+            if(thisPlayerData.name){
+                var holdNum = thisGameData.turnNum
+                holdNum = holdNum + 1
+                const wait = await updateTurn(holdNum)
+                console.log("CardClick wait:")
+                console.log(wait)
+                console.log(thisGameData)
+                console.log(gameData)
+                /*if(wait == 1){
+                    updatedGame()
+                }
+                else {
+                    console.log("Problem with cardClick")
+                }*/
             }
-            else {
-                alert("It is not currently your turn please refresh the game every so often to check when it is your turn")
-            }
-        }
-        else {
-            alert("Please Deal Cards and/or refresh game ")
         }
     };
 
