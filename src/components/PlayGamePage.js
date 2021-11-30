@@ -6,9 +6,18 @@ import Axios from "axios"
 import ipAddress from '../ipStore';
 
 //Landing page component
-export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData, setPlayerData, setGameData, cardData, mongoPlayerID }) => {
+export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName, gameData, playerData, setPlayerData, setGameData, cardData, mongoPlayerID }) => {
     const [currentTurn, setCurrentTurn] = useState("")
+    const [cardImg1, setCardImg1] = useState("")
+    const [cardImg2, setCardImg2] = useState("")
+    const [cardImg3, setCardImg3] = useState("")
+    const [cardImg4, setCardImg4] = useState("")
+    const [cardImg5, setCardImg5] = useState("")
+    const [cardImg6, setCardImg6] = useState("")
+    const [cardImg7, setCardImg7] = useState("")
+    const [thisPlayerData, setThisPlayerData] = useState([])
     var cardSize = 200
+    
 
     const styles = ({
         spacePlayerLabel: {
@@ -25,73 +34,13 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
         },
     })
 
-    const generateCards = () => {
-        var suit = Math.floor((Math.random() * 4) + 1);
-        var value = Math.floor((Math.random() * 12) + 0);
-
-        var holdCards = []
-        switch (suit) {
-            case 1:
-                for (let i = 0; i < 52; i++){
-                    if(cardData[i].suit == "Red Hearts"){
-                        holdCards.push(cardData[i])
-                    }
-                }
-                break;
-            case 2:
-                for (let i = 0; i < 52; i++){
-                    if(cardData[i].suit == "Red Diamonds"){
-                        holdCards.push(cardData[i])
-                    }
-                }
-                break;
-            case 3:
-                for (let i = 0; i < 52; i++){
-                    if(cardData[i].suit == "Black Clubs"){
-                        holdCards.push(cardData[i])
-                    }
-                }
-                break;
-            case 4:
-                for (let i = 0; i < 52; i++){
-                    if(cardData[i].suit == "Black Spades"){
-                        holdCards.push(cardData[i])
-                    }
-                }
-                break;
-        }
-
-        return(holdCards[value])
-    }
-
-    const fillHand = async() => {
-        for(let i = 0; i < 6; i++){
-            try{
-                const holdCard = generateCards()
-                const updatedPlayer = await Axios.put(`http://${ipAddress}:3003/player/addCard/${mongoGameID}`, { card: holdCard._id })
-            } catch (err) {
-                console.error(err)
-            }
-        }
-    }
-
-    const fetchPlayer = async () => {
-        const res = await Axios.get(`http://${ipAddress}:3003/player/findOne/${mongoPlayerID}`)
+    //fetch all players
+    const fetchPlayers = async () => {
+        const res = await Axios.get(`http://${ipAddress}:3003/player/findAll`)
         const data = await res.data
         setPlayerData(data)
+        return data
     }
-
-    const updateTurn = async ( gName, pName ) => {
-        try {
-            const updatedGame = await Axios.put(`http://${ipAddress}:3003/game/changeTurn/${mongoGameID}`, { playerName: "holdPlayerIDs" })
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
-    const cardClick = () => {
-        console.log("CLICKED");
-    };
 
     //fetch all the Games
     const fetchGames = async () => {
@@ -106,19 +55,99 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
         setGameData(gamesFromBackend)
     }
 
-    const updateGame = async () => {
-        const res = await Axios.get(`http://${ipAddress}:3003/game/findOne/${mongoGameID}`)
-        setCurrentTurn(res.data.turn)
-        console.log(currentTurn) 
-        fetchPlayer()
-        setCurrentPage("PlayGamePage")
+    const cardClick = () => {
+        console.log("CLICKED");
+    };
+
+    const findPlayer = async () => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < playerData.length){
+            //console.log(playerData[count].name)
+            //console.log(userInputPlayerName)
+            if(playerData[count].name == userInputPlayerName){
+                //console.log(playerData[count])
+                setThisPlayerData(playerData[count])
+                //console.log(thisPlayerData)
+                notFound = true
+            }
+            else {
+                count=count+1
+            }
+        }
     }
 
-    
-    //updateGame()
-    //console.log(playerData.cards)
-    
-    
+    const findCard = async (cardID) => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < cardData.length){
+            //console.log(cardData[count])
+            //console.log(cardID)
+            if(cardData[count]._id == cardID){
+                //console.log(cardData[count].img)
+                notFound = true
+                return cardData[count].img
+            }
+            else {
+                count=count+1
+            }
+        }
+    }
+
+    const findGame = async (gameID) => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < gameData.length){
+            //console.log(cardData[count])
+            //console.log(cardID)
+            if(gameData[count]._id == gameID){
+                //console.log(cardData[count].img)
+                notFound = true
+                return gameData[count]
+            }
+            else {
+                count=count+1
+            }
+        }
+    }
+
+    const updateImages = async () => {
+        const call =  await fetchPlayers()
+        const callPlaye = await findPlayer()
+        const img1 = await findCard(thisPlayerData.cards[0])
+        const img2 = await findCard(thisPlayerData.cards[1])
+        const img3 = await findCard(thisPlayerData.cards[2])
+        const img4 = await findCard(thisPlayerData.cards[3])
+        const img5 = await findCard(thisPlayerData.cards[4])
+        const img6 = await findCard(thisPlayerData.cards[5])
+        const img7 = await findCard(thisPlayerData.cards[6])
+        setCardImg1(img1)
+        setCardImg2(img2)
+        setCardImg3(img3)
+        setCardImg4(img4)
+        setCardImg5(img5)
+        setCardImg6(img6)
+        setCardImg7(img7)
+    }
+
+    const updateGame = async () => {
+        console.log("Ran upDateGame")
+        //setCurrentTurn(res.data.turn) 
+        //fetchPlayers()
+        //fetchGames()
+        //setCurrentPage("PlayGamePage")
+    }
+
+    if(!cardImg1){
+        setCardImg1('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg2('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg3('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg4('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg5('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg6('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+        setCardImg7('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
+    }
+
     return(
         <div>
             <div>
@@ -135,16 +164,22 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, gameData, playerData
                 </label>
             </div>
             <div>
-                <button><img src = {cardData[0].img} alt='Button 1' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg1} alt='Button 1' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg2} alt='Button 2' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg3} alt='Button 3' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg4} alt='Button 4' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg5} alt='Button 5' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg6} alt='Button 6' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
+                <button><img src = {cardImg7} alt='Button 7' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
             </div>
             <div>
-                <Button text = "Back To Menu" color = "white" onClick = {() => {
-                    setCurrentPage("LandingPage")
+                <Button text = "Deal Cards" color = "white" onClick = {() => {
+                    updateImages()
                 }} />
             </div>
             <div>
-                <Button text = "Change Turn" color = "white" onClick = {() => {
-                    setCurrentTurn("Test")
+                <Button text = "Exit Game" color = "white" onClick = {() => {
+                    setCurrentPage("LandingPage")
                 }} />
             </div>
         </div>  

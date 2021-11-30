@@ -17,6 +17,7 @@ const App = () => {
   const [userInputPlayerName, setUserInputPlayerName] = useState("")
   const [mongoPlayerID, setMongoPlayerID] = useState("")
   const [mapGames, setMapGames] = useState([])
+  const [userCards, setUserCards] = useState([])
 
   //state of the current page, used to render specific pages
   const [currentPage, setCurrentPage] = useState("")
@@ -47,11 +48,13 @@ const App = () => {
     if (currentPage == "CreateGamePage") {
       return(<HostCreatePage 
         gameData = {gameData}
+        cardData = {cardData}
         setGameData = {setGameData}
         setCurrentPage = {setCurrentPage}
         userInputPlayerName = {userInputPlayerName}
         setMongoPlayerID = {setMongoPlayerID} 
         setMongoGameID = {setMongoGameID}
+        setUserCards = {setUserCards}
       />)
     }
     if (currentPage == "PlayGamePage") {
@@ -65,14 +68,18 @@ const App = () => {
         gameData = {gameData}
         playerData = {playerData}
         cardData = {cardData}
+        userInputPlayerName = {userInputPlayerName}
       />)
     }
     if (currentPage == "FindGamePage") {
       return(<FindGamePage 
         gameData = {gameData}
+        cardData = {cardData}
         setCurrentPage = {setCurrentPage}
         setGameData = {setGameData}
         mongoPlayerID={mongoPlayerID}
+        mongoGameID={mongoGameID}
+        setUserCards={setUserCards}
         setMongoPlayerID = {setMongoPlayerID}
         userInputPlayerName = {userInputPlayerName}
         setMongoGameID = {setMongoGameID}
