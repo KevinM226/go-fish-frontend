@@ -97,6 +97,9 @@ export const FindGamePage = ({ gameData, cardData, setCurrentPage, userInputPlay
             holdVal = generateCards()
              holdCards[i] = holdVal._id
         }
+        for(let i = 7; i < 14; i++){
+             holdCards[i] = 'Blank'
+        }
     }
 
     getGames()

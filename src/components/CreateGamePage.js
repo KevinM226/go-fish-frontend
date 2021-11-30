@@ -76,7 +76,10 @@ export const CreateGamePage = ({ gameData, cardData, setCurrentPage, setMongoPla
         var holdVal
         for(let i = 0; i < 7; i++){
             holdVal = generateCards()
-             holdCards[i] = holdVal._id
+            holdCards[i] = holdVal._id
+        }
+        for(let i = 7; i < 14; i++){
+            holdCards[i] = 'Blank'
         }
     }
 
