@@ -8,6 +8,7 @@ import ipAddress from '../ipStore';
 //Landing page component
 export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName, gameData, playerData, setPlayerData, setGameData, cardData, mongoPlayerID }) => {
     const [currentTurn, setCurrentTurn] = useState("")
+    const [currentAction, setCurrentAction] = useState("")
     const [cardImg1, setCardImg1] = useState("")
     const [cardImg2, setCardImg2] = useState("")
     const [cardImg3, setCardImg3] = useState("")
@@ -16,6 +17,7 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
     const [cardImg6, setCardImg6] = useState("")
     const [cardImg7, setCardImg7] = useState("")
     const [thisPlayerData, setThisPlayerData] = useState([])
+    const [thisGameData, setThisGameData] = useState([])
     var cardSize = 200
     
 
@@ -55,10 +57,6 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         setGameData(gamesFromBackend)
     }
 
-    const cardClick = () => {
-        console.log("CLICKED");
-    };
-
     const findPlayer = async () => {
         var notFound = false
         var count = 0
@@ -70,6 +68,34 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
                 setThisPlayerData(playerData[count])
                 //console.log(thisPlayerData)
                 notFound = true
+            }
+            else {
+                count=count+1
+            }
+        }
+    }
+
+    const findPlyerTurn = async (playerId) => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < playerData.length){
+            if(playerData[count]._id == playerId){
+                notFound = true
+                return playerData[count].name
+            }
+            else {
+                count=count+1
+            }
+        }
+    }
+
+    const findAction = async (playerId) => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < playerData.length){
+            if(playerData[count]._id == playerId){
+                notFound = true
+                return playerData[count].action
             }
             else {
                 count=count+1
@@ -95,23 +121,6 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         }
     }
 
-    const findGame = async (gameID) => {
-        var notFound = false
-        var count = 0
-        while(notFound == false && count < gameData.length){
-            console.log(gameData[count])
-            console.log(gameID)
-            if(gameData[count]._id == gameID){
-                console.log(gameData[count].img)
-                notFound = true
-                return gameData[count]
-            }
-            else {
-                count=count+1
-            }
-        }
-    }
-
     const setImgs = async (hold1, hold2, hold3, hold4, hold5, hold6, hold7) => {
         setCardImg1(hold1)
         setCardImg2(hold2)
@@ -122,21 +131,57 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         setCardImg7(hold7)
     }
 
-    const updateGame = async () => {
-        console.log("Ran upDateGame")
-        //setCurrentTurn(res.data.turn) 
-        //fetchPlayers()
-        //fetchGames()
-        //setCurrentPage("PlayGamePage")
+    const findGame = async (gameID) => {
+        var notFound = false
+        var count = 0
+        while(notFound == false && count < gameData.length){
+            console.log(gameData[count])
+            console.log(gameID)
+            if(gameID){
+                if(gameData[count]._id == gameID){
+                    console.log(gameData[count])
+                    notFound = true
+                    setThisGameData(gameData[count])
+                }
+                else {
+                    count=count+1
+                }
+            }
+            else {
+                alert("Please wait a few seconds while data loads")
+            }
+            
+        }
+    }
+
+    const turnRequest = async (value) => {
+        try {
+            const res = await Axios.put(`http://${ipAddress}:3003/game/changeTurn/${mongoGameID}`, {playerNum: value})
+        } catch (err){
+            console.log(err)
+        }
+    }
+
+    const updateTurn = async () => {
+        if(thisGameData.name){
+            if(thisGameData.turnNum = thisGameData.playerCount){
+               const holdUpdate = await turnRequest(0)
+            }
+            else {
+                const holdVal = thisGameData.turnNum + 1
+                const holdUpdate = await turnRequest(holdVal) 
+            }
+        }
+        else {
+            alert("Please refresh game")
+        }
     }
 
     const updateImages = async () => {
-        const call =  await fetchPlayers()
-        const callPlaye = await findPlayer()
+        const callFindAll =  await fetchPlayers()
+        const callPlayer = await findPlayer()
         if(thisPlayerData.cards){
             const img1 = await findCard(thisPlayerData.cards[0])
-            //console.log("Have img: ")
-            //console.log(img1)
             const img2 = await findCard(thisPlayerData.cards[1])
             const img3 = await findCard(thisPlayerData.cards[2])
             const img4 = await findCard(thisPlayerData.cards[3])
@@ -150,6 +195,40 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         
     }
 
+    const updatedGame = async () => {
+        const callFindAll =  await fetchGames()
+        const callPlayer = await findGame(mongoGameID)
+        if(thisGameData.turnNum){
+            const holdIndex = thisGameData.turnNum
+            const holdPlayerName = await findPlyerTurn(thisGameData.players[holdIndex])
+            const holdAction = await findAction(thisGameData.players[holdIndex])
+            setCurrentTurn(holdPlayerName)
+            setCurrentAction(holdAction)
+            updateImages()
+        }
+        else {
+            alert("Please wait a few seconds while data loads")
+        }
+    }
+
+    const takeCard = async () => {
+        
+    }
+
+    const cardClick = () => {
+        if(thisGameData.cards && thisPlayerData.name){
+            if(thisPlayerData.action == "Going"){
+
+            }
+            else {
+                alert("It is not currently your turn please refresh the game every so often to check when it is your turn")
+            }
+        }
+        else {
+            alert("Please Deal Cards and/or refresh game ")
+        }
+    };
+
     if(!cardImg1){
         setCardImg1('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
         setCardImg2('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
@@ -160,6 +239,8 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         setCardImg7('https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png')
     }
 
+    //if(thisGameData)
+
     return(
         <div>
             <div>
@@ -167,7 +248,7 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
                     Current Turn: {currentTurn}
                 </h1>
                 <label style={styles.spacePlayerLabel}>
-                    Player is currently: {currentTurn}
+                    Player is currently: {currentAction}
                 </label>
             </div>
             <div>
@@ -185,8 +266,18 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
                 <button><img src = {cardImg7} alt='Button 7' onClick={cardClick} height={cardSize} onError={(e)=>{e.target.onerror = null; e.target.src="https://www.pngfind.com/pngs/m/39-397218_blank-playing-card-png-png-ramme-transparent-png.png"}}/></button>
             </div>
             <div>
+                <label style={styles.spaceLabel}>
+                    Current Hand
+                </label>
+            </div>
+            <div>
                 <Button text = "Deal Cards" color = "white" onClick = {() => {
                     updateImages()
+                }} />
+            </div>
+            <div>
+                <Button text = "Refresh Game" color = "white" onClick = {() => {
+                    updatedGame()
                 }} />
             </div>
             <div>
