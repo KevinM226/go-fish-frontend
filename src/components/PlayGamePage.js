@@ -80,11 +80,12 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
     const findCard = async (cardID) => {
         var notFound = false
         var count = 0
-        while(notFound == false && count < cardData.length){
-            //console.log(cardData[count])
-            //console.log(cardID)
+
+         console.log(cardID)
+        while(notFound == false && count < cardData.length){  
+            console.log(cardData[count]) 
             if(cardData[count]._id == cardID){
-                //console.log(cardData[count].img)
+                console.log(cardData[count].img)
                 notFound = true
                 return cardData[count].img
             }
@@ -98,10 +99,10 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         var notFound = false
         var count = 0
         while(notFound == false && count < gameData.length){
-            //console.log(cardData[count])
-            //console.log(cardID)
+            console.log(gameData[count])
+            console.log(gameID)
             if(gameData[count]._id == gameID){
-                //console.log(cardData[count].img)
+                console.log(gameData[count].img)
                 notFound = true
                 return gameData[count]
             }
@@ -111,23 +112,14 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         }
     }
 
-    const updateImages = async () => {
-        const call =  await fetchPlayers()
-        const callPlaye = await findPlayer()
-        const img1 = await findCard(thisPlayerData.cards[0])
-        const img2 = await findCard(thisPlayerData.cards[1])
-        const img3 = await findCard(thisPlayerData.cards[2])
-        const img4 = await findCard(thisPlayerData.cards[3])
-        const img5 = await findCard(thisPlayerData.cards[4])
-        const img6 = await findCard(thisPlayerData.cards[5])
-        const img7 = await findCard(thisPlayerData.cards[6])
-        setCardImg1(img1)
-        setCardImg2(img2)
-        setCardImg3(img3)
-        setCardImg4(img4)
-        setCardImg5(img5)
-        setCardImg6(img6)
-        setCardImg7(img7)
+    const setImgs = async (hold1, hold2, hold3, hold4, hold5, hold6, hold7) => {
+        setCardImg1(hold1)
+        setCardImg2(hold2)
+        setCardImg3(hold3)
+        setCardImg4(hold4)
+        setCardImg5(hold5)
+        setCardImg6(hold6)
+        setCardImg7(hold7)
     }
 
     const updateGame = async () => {
@@ -136,6 +128,26 @@ export const PlayGamePage = ({ setCurrentPage, mongoGameID, userInputPlayerName,
         //fetchPlayers()
         //fetchGames()
         //setCurrentPage("PlayGamePage")
+    }
+
+    const updateImages = async () => {
+        const call =  await fetchPlayers()
+        const callPlaye = await findPlayer()
+        if(thisPlayerData.cards){
+            const img1 = await findCard(thisPlayerData.cards[0])
+            //console.log("Have img: ")
+            //console.log(img1)
+            const img2 = await findCard(thisPlayerData.cards[1])
+            const img3 = await findCard(thisPlayerData.cards[2])
+            const img4 = await findCard(thisPlayerData.cards[3])
+            const img5 = await findCard(thisPlayerData.cards[4])
+            const img6 = await findCard(thisPlayerData.cards[5])
+            const img7 = await findCard(thisPlayerData.cards[6])
+            const holdImgs = await setImgs(img1, img2, img3, img4, img5, img6, img7)
+        } else {
+            alert("Please wait a few seconds while data loads")
+        }
+        
     }
 
     if(!cardImg1){

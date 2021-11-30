@@ -15,7 +15,7 @@ export const CreateGamePage = ({ gameData, cardData, setCurrentPage, setMongoPla
             const createdPlayer = await Axios.post(`http://${ipAddress}:3003/player/create`, { name: pName, card: holdCards });
             setMongoPlayerID(createdPlayer.data._id)
             console.log("This is the name that the game will create with", gName)
-            const createdGame = await Axios.post(`http://${ipAddress}:3003/game/create`, { name: gName, players: createdPlayer.data._id, playerCount: 1, turn: pName });
+            const createdGame = await Axios.post(`http://${ipAddress}:3003/game/create`, { name: gName, players: createdPlayer.data._id, playerCount: 1 });
             console.log(createdGame)
             setMongoGameID(createdGame.data._id)
         } catch (err) {
